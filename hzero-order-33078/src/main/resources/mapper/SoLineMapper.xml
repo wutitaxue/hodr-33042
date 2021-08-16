@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hzero.order.infra.mapper.SoLineMapper">
+
+    <resultMap id="BaseResultMap" type="com.hzero.order.domain.vo.SolineVo">
+        <!--@Table -->
+        <result property="soLineId" column="so_line_id" jdbcType="INTEGER"/>
+        <result property="soHeaderId" column="so_header_id" jdbcType="INTEGER"/>
+        <result property="lineNumber" column="line_number" jdbcType="INTEGER"/>
+        <result property="itemId" column="item_id" jdbcType="INTEGER"/>
+        <result property="orderQuality" column="order_quality" jdbcType="OTHER"/>
+        <result property="orderQualityUom" column="order_quality_uom" jdbcType="VARCHAR"/>
+        <result property="unitSellingPrice" column="unit_selling_price" jdbcType="OTHER"/>
+        <result property="description" column="description" jdbcType="VARCHAR"/>
+        <result property="addition1" column="addition1" jdbcType="VARCHAR"/>
+        <result property="addition2" column="addition2" jdbcType="VARCHAR"/>
+        <result property="addition3" column="addition3" jdbcType="VARCHAR"/>
+        <result property="addition4" column="addition4" jdbcType="VARCHAR"/>
+        <result property="addition5" column="addition5" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="BaseSql">
+        hsl
+        .
+        so_line_id
+        ,
+                    hsl.so_header_id, 
+                    hsl.line_number, 
+                    hsl.item_id,
+                    hsl.item_code
+                    hsl.order_quality, 
+                    hsl.order_quality_uom, 
+                    hsl.unit_selling_price, 
+                    hsl.description, 
+                    hsl.addition1, 
+                    hsl.addition2, 
+                    hsl.addition3, 
+                    hsl.addition4, 
+                    hsl.addition5
+    </sql>
+
+    <select id="selectList" resultType="com.hzero.order.domain.entity.SoLine">
+        select
+        <include refid="BaseSql"/>
+        from hodr_so_line hsl
+        <where>
+            <if test="soLineId !=null">
+                and hsl.so_Line_id = #{soLineId,jdbcType = INTEGER}
+            </if>
+        </where>
+    </select>
+    <select id="listSoLineBySoHeaderId" resultType="com.hzero.order.domain.vo.SolineVo">
+        SELECT
+            hsl.line_number,
+            hi.item_id,
+            hi.item_code,
+            hi.item_description,
+            hsl.order_quality_uom,
+            hsl.so_line_id,
+            hsl.order_quality,
+            hsl.description,
+            hsl.object_version_number,
+            hsl.unit_selling_price,
+            (hsl.order_quality*hsl.unit_selling_price)as money,
+            hsl.addition1,
+            hsl.addition2,
+            hsl.addition3,
+            hsl.addition4,
+            hsl.addition5
+        FROM
+            hodr_item hi
+                JOIN hodr_so_line hsl ON hi.item_id = hsl.item_id
+
+
+        where  hsl.so_header_id = #{soLine.soHeaderId}
+    </select>
+</mapper>

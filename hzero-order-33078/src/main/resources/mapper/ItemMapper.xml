@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hzero.order.infra.mapper.ItemMapper">
+
+    <resultMap id="BaseResultMap" type="com.hzero.order.domain.entity.Item">
+        <!--@Table -->
+        <result property="itemId" column="item_id" jdbcType="INTEGER"/>
+        <result property="itemCode" column="item_code" jdbcType="VARCHAR"/>
+        <result property="itemUom" column="item_uom" jdbcType="VARCHAR"/>
+        <result property="itemDescription" column="item_description" jdbcType="VARCHAR"/>
+        <result property="saleableFlag" column="saleable_flag" jdbcType="BOOLEAN"/>
+        <result property="startActiveDate" column="start_active_date" jdbcType="OTHER"/>
+        <result property="endActiveDate" column="end_active_date" jdbcType="OTHER"/>
+        <result property="enabledFlag" column="enabled_flag" jdbcType="BOOLEAN"/>
+    </resultMap>
+
+    <sql id="BaseSql">
+        hi
+        .
+        item_id
+        ,
+                    hi.item_code, 
+                    hi.item_uom, 
+                    hi.item_description, 
+                    hi.saleable_flag, 
+                    hi.start_active_date, 
+                    hi.end_active_date, 
+                    hi.enabled_flag
+    </sql>
+
+    <select id="selectList" resultType="com.hzero.order.domain.entity.Item">
+        select
+        <include refid="BaseSql"/>
+        from hodr_item hi
+        <where>
+            <if test="itemId !=null">
+                and hi.item_id = #{itemId,jdbcType = INTEGER}
+            </if>
+        </where>
+    </select>
+</mapper>

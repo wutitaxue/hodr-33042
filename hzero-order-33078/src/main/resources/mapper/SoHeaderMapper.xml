@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hzero.order.infra.mapper.SoHeaderMapper">
+
+    <resultMap id="BaseResultMap" type="com.hzero.order.domain.entity.SoHeader">
+        <!--@Table -->
+        <result property="soHeaderId" column="so_header_id" jdbcType="INTEGER"/>
+        <result property="orderNumber" column="order_number" jdbcType="VARCHAR"/>
+        <result property="companyId" column="company_id" jdbcType="INTEGER"/>
+        <result property="orderDate" column="order_date" jdbcType="OTHER"/>
+        <result property="orderStatus" column="order_status" jdbcType="VARCHAR"/>
+        <result property="customerId" column="customer_id" jdbcType="INTEGER"/>
+    </resultMap>
+    <update id="closeOrderStatus">
+
+            update hodr_so_header sh
+            set sh.order_status = 'CLOSED'
+            where sh.order_status = 'APPROVED'
+
+    </update>
+
+
+    <select id="selectList" resultType="com.hzero.order.domain.entity.SoHeader">
+        SELECT
+        b.so_header_id,
+        b.order_number,
+        b.customer_id,
+        b.customer_name,
+        b.company_id,
+        hcy.company_name,
+        b.order_date,
+        b.order_status,
+        b.money,
+        b.object_version_number
+        ,b.created_by
+
+        FROM
+        (
+        SELECT
+        a.so_header_id,
+        a.order_number,
+        a.company_id,
+        a.customer_id,
+        a.order_date,
+        hcr.customer_name,
+        a.order_status,
+        a.money,
+        a.object_version_number,
+        a.created_by
+        FROM
+        (
+        SELECT
+        hsh.so_header_id,
+        hsh.order_number,
+        hsh.company_id,
+        hsh.customer_id,
+        hsh.order_date,
+        hsh.order_status,
+
+        hsh.created_by,
+        ( hsl.order_quality * hsl.unit_selling_price ) AS money,
+        hsh.object_version_number
+        FROM
+        hodr_so_header hsh
+        LEFT JOIN hodr_so_line hsl ON hsh.so_header_id = hsl.so_header_id
+        ) AS a
+        LEFT JOIN hodr_customer hcr ON a.customer_id = hcr.customer_id
+        ) b
+        LEFT JOIN hodr_company hcy ON b.company_id = hcy.company_id
+        <where>
+            <if test="soHeaderId !=null">
+                b.so_header_id = #{soHeaderId}
+            </if>
+            <if test="orderNumber !=null and orderNumber !=''">
+                b.order_number like concat('%',#{orderNumber},'%')
+            </if>
+            <if test="companyId !=null">
+                b.company_id = #{companyId}
+            </if>
+            <if test="customerId !=null">
+                b.customer_id = #{customerId}
+            </if>
+            <if test="orderStatus !=null">
+                b.order_status like concat('%',#{orderStatus},'%')
+            </if>
+        </where>
+        group by  b.so_header_id
+    </select>
+</mapper>

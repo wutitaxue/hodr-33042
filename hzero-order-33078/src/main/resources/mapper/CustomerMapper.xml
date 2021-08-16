@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hzero.order.infra.mapper.CustomerMapper">
+
+    <resultMap id="BaseResultMap" type="com.hzero.order.domain.entity.Customer">
+        <!--@Table -->
+        <result property="customerId" column="customer_id" jdbcType="INTEGER"/>
+        <result property="customerNumber" column="customer_number" jdbcType="VARCHAR"/>
+        <result property="customerName" column="customer_name" jdbcType="VARCHAR"/>
+        <result property="comapnyId" column="comapny_id" jdbcType="INTEGER"/>
+        <result property="enabledFlag" column="enabled_flag" jdbcType="BOOLEAN"/>
+        <result property="createdDate" column="created_date" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="BaseSql">
+        hc
+        .
+        customer_id
+        ,
+                    hc.customer_number, 
+                    hc.customer_name, 
+                    hc.comapny_id, 
+                    hc.enabled_flag, 
+                    hc.created_date
+    </sql>
+
+    <select id="selectList" resultType="com.hzero.order.domain.entity.Customer">
+        select
+        <include refid="BaseSql"/>
+        from hodr_customer hc
+        <where>
+            <if test="customerId !=null">
+                and hc.customer_id = #{customerId,jdbcType = INTEGER}
+            </if>
+        </where>
+    </select>
+</mapper>
